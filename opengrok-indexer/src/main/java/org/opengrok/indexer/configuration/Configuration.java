@@ -148,7 +148,7 @@ public final class Configuration {
     private boolean authorizationWatchdogEnabled;
     private AuthorizationStack pluginStack;
     private Map<String, Project> projects; // project name -> Project
-    private Set<Group> groups;
+    private Map<String, Group> groups; // group name -> Group
     private String sourceRoot;
     private String dataRoot;
     /**
@@ -864,19 +864,29 @@ public final class Configuration {
      * @throws IOException when group is not unique across the set
      */
     public void addGroup(Group group) throws IOException {
-        if (!groups.add(group)) {
-            throw new IOException(
-                    String.format("Duplicate group name '%s' in configuration.",
-                            group.getName()));
-        }
+      if ( groups.containsKey( group.getName() ) ) {
+          throw new IOException(
+                  String.format("Duplicate group name '%s' in configuration.",
+                          group.getName()));
+      }else{
+          groups.put(group.getName(), group);
+      }
     }
 
-    public Set<Group> getGroups() {
+    public Map<String, Group> getGroups() {
         return groups;
     }
 
-    public void setGroups(Set<Group> groups) {
+    public void setGroups(Map<String, Group> groups) {
         this.groups = groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        Map<String, Group> settedGroup = new HashMap<String, Group>();
+        for (Group entry : groups){
+            settedGroup.put(entry.getName(), entry);
+        }
+        this.groups = settedGroup;
     }
 
     public String getSourceRoot() {
@@ -1442,13 +1452,14 @@ public final class Configuration {
         // This ensures that when the configuration is reloaded then the set 
         // contains only root groups. Subgroups are discovered again
         // as follows below
-        conf.groups.removeIf(g -> g.getParent() != null);
+        //conf.groups.forEach( (k,v) -> conf.groups.remove(v.getParent() != null ? v.getName() : null ) );
+        conf.groups.entrySet().removeIf( entries -> entries.getValue().getParent() != null);
 
         // Traversing subgroups and checking for duplicates,
         // effectively transforms the group tree to a structure (Set)
         // supporting an iterator.
         TreeSet<Group> copy = new TreeSet<>();
-        LinkedList<Group> stack = new LinkedList<>(conf.groups);
+        LinkedList<Group> stack = new LinkedList<>( conf.groups.values());
         while (!stack.isEmpty()) {
             Group group = stack.pollFirst();
             stack.addAll(group.getSubgroups());
