@@ -873,8 +873,8 @@ public final class Configuration {
       }
     }
 
-    public Map<String, Group> getGroups() {
-        return groups;
+    public Set<Group> getGroups() {
+      return (Set<Group>) this.groups.values();
     }
 
     public void setGroups(Map<String, Group> groups) {
