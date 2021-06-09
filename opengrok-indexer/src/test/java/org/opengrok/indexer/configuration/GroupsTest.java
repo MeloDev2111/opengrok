@@ -57,19 +57,19 @@ public class GroupsTest {
                 new Class<?>[]{Set.class, String.class},
                 new Object[]{groups, "random not existing group"});
 
-        assertEquals(6, cfg.getGroups().size());
+        assertEquals(6, groups.size());
 
         invokeMethod("deleteGroup",
                 new Class<?>[]{Set.class, String.class},
                 new Object[]{groups, "apache"});
 
-        assertEquals(5, cfg.getGroups().size());
+        assertEquals(5, groups.size());
 
         invokeMethod("deleteGroup",
                 new Class<?>[]{Set.class, String.class},
                 new Object[]{groups, "ctags"});
 
-        assertEquals(1, cfg.getGroups().size());
+        assertEquals(1, groups.size());
     }
 
     @Test

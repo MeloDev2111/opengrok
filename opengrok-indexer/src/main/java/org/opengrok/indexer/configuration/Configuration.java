@@ -874,7 +874,7 @@ public final class Configuration {
     }
 
     public Set<Group> getGroups() {
-      return (Set<Group>) this.groups.values();
+      return new HashSet<Group>( this.groups.values() );
     }
 
     public void setGroups(Map<String, Group> groups) {
